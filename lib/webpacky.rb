@@ -1,4 +1,15 @@
 # frozen_string_literal: true
 
-require "webpack/dev_server"
-require "webpack/manifest"
+module Webpacky
+  class << self
+    def configure
+      yield config
+    end
+
+    def config
+      @config ||= Configuration.new
+    end
+  end
+end
+
+require "webpacky/configuration"
