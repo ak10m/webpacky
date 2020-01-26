@@ -13,3 +13,4 @@ module Webpacky
 end
 
 require "webpacky/configuration"
+require "webpacky/railtie" if defined? Rails
