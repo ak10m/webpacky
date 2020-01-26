@@ -40,11 +40,37 @@ services:
       WEBPACK_MANIFEST_URL: "http://webpack:${WEBPACK_DEV_SERVER_PORT?}/manifest.json"
     command: "bundle exec rackup --host 0.0.0.0"
 
+  rails:
+    build:
+      context: ./rails
+      args:
+        RUBY_VERISON: ${RUBY_VERSION?}
+    volumes:
+      - ./rails:/src
+      - rails_bundle:/usr/local/bundle
+    ports:
+      - "${RAILS_APP_PORT:-3000}:3000"
+    networks:
+      - webpacky-network
+    depends_on:
+      - webpack
+    links:
+      - webpack
+    environment:
+      RAILS_ENV: development
+      WEBPACK_DEV_SERVER_URL: "http://webpack:${WEBPACK_DEV_SERVER_PORT?}"
+      WEBPACK_DEV_SERVER_CONNECT_TIMEOUT: 0.1
+      WEBPACK_DEV_SERVER_PROXY_PATH: "/rails-app-to-webpack/"
+      WEBPACK_MANIFEST_URL: "http://webpack:${WEBPACK_DEV_SERVER_PORT?}/manifest.json"
+    command: "bundle exec pumactl start"
+
 
 volumes:
   node_modules:
     driver: local
   rack_bundle:
+    driver: local
+  rails_bundle:
     driver: local
 
 networks:
